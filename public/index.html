@@ -292,7 +292,7 @@ body::before {
 
 <header class="header">
   <div class="logo">
-    <div class="logo-mark">⚡</div>
+    <div class="logo-mark">Perf</div>
     <div class="logo-name">Code<span>Piolet</span></div>
   </div>
   <div class="header-tag">GOD-MODE ANALYZER</div>
@@ -347,7 +347,7 @@ const query = `SELECT * FROM users WHERE id = '${userInput}'`;</textarea>
       </button>
       <button class="btn btn-enhance" id="enhanceBtn" onclick="enhanceCode()" disabled>
         <div class="spinner white" id="enhanceSpinner"></div>
-        <span id="enhanceBtnText">✨ Enhance</span>
+        <span id="enhanceBtnText">Style Enhance</span>
       </button>
       <button class="btn btn-clear" onclick="clearAll()">🗑</button>
     </div>
@@ -377,10 +377,10 @@ const query = `SELECT * FROM users WHERE id = '${userInput}'`;</textarea>
         </div>
       </div>
       <div class="stat-pills" id="statPills">
-        <div class="pill bugs">🐛 Bugs: —</div>
-        <div class="pill security">🔒 Security: —</div>
-        <div class="pill style">✨ Style: —</div>
-        <div class="pill perf">⚡ Perf: —</div>
+        <div class="pill bugs">Bugs Bugs: —</div>
+        <div class="pill security">Security Security: —</div>
+        <div class="pill style">Style Style: —</div>
+        <div class="pill perf">Perf Perf: —</div>
       </div>
     </div>
 
@@ -478,10 +478,10 @@ function renderResults(data) {
   document.getElementById('scoreBadge').textContent = 'COMPLETE';
   document.getElementById('scoreBadge').className = 'score-badge done';
   document.getElementById('statPills').innerHTML = `
-    <div class="pill bugs">🐛 Bugs: ${data.bugs??0}</div>
-    <div class="pill security">🔒 Security: ${data.security??0}</div>
-    <div class="pill style">✨ Style: ${data.style??0}</div>
-    <div class="pill perf">⚡ Perf: ${data.performance??0}</div>`;
+    <div class="pill bugs">Bugs Bugs: ${data.bugs??0}</div>
+    <div class="pill security">Security Security: ${data.security??0}</div>
+    <div class="pill style">Style Style: ${data.style??0}</div>
+    <div class="pill perf">Perf Perf: ${data.performance??0}</div>`;
 
   const issues = data.issues || [];
   document.getElementById('issuesCount').textContent = `${issues.length} issue${issues.length!==1?'s':''}`;
@@ -588,10 +588,10 @@ async function enhanceCode() {
     document.getElementById('codeInput').value = data.enhanced;
     updateLineCount();
     document.getElementById('issuesList').innerHTML = `
-      <div class="empty-state"><div class="empty-icon">✨</div>
+      <div class="empty-state"><div class="empty-icon">Style</div>
       <div class="empty-title">Code Enhanced</div>
       <div class="empty-sub">Re-analyzing improved code...</div></div>`;
-    toast('✨ Enhanced! Re-analyzing...', 'success');
+    toast('Style Enhanced! Re-analyzing...', 'success');
     setStatus('Enhanced — re-analyzing...', 'ok');
     setTimeout(() => analyzeCode(), 400);
 
@@ -604,7 +604,7 @@ async function enhanceCode() {
   isEnhancing = false;
   btn.disabled = false;
   document.getElementById('enhanceSpinner').style.display = 'none';
-  document.getElementById('enhanceBtnText').textContent = '✨ Enhance';
+  document.getElementById('enhanceBtnText').textContent = 'Style Enhance';
 }
 
 // ── CLEAR ──
@@ -621,10 +621,10 @@ function clearAll() {
   document.getElementById('scoreBadge').textContent = 'READY';
   document.getElementById('scoreBadge').className = 'score-badge';
   document.getElementById('statPills').innerHTML = `
-    <div class="pill bugs">🐛 Bugs: —</div>
-    <div class="pill security">🔒 Security: —</div>
-    <div class="pill style">✨ Style: —</div>
-    <div class="pill perf">⚡ Perf: —</div>`;
+    <div class="pill bugs">Bugs Bugs: —</div>
+    <div class="pill security">Security Security: —</div>
+    <div class="pill style">Style Style: —</div>
+    <div class="pill perf">Perf Perf: —</div>`;
   document.getElementById('issuesList').innerHTML = `
     <div class="empty-state"><div class="empty-icon">🔬</div>
     <div class="empty-title">No Analysis Yet</div>
