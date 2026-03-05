@@ -1,4 +1,4 @@
-﻿const express = require('express');
+const express = require('express');
 const cors = require('cors');
 const Groq = require('groq-sdk');
 const path = require('path');
@@ -46,7 +46,7 @@ app.post('/api/enhance', async (req, res) => {
     return res.json({ enhanced });
   } catch (e) { return res.status(500).json({ error: e.message }); }
 });
-app.use(express.static(path.join(__dirname, 'public')));
+console.log('Static middleware loaded'); app.use(express.static(path.join(__dirname, 'public')));
 app.get('*', (req, res) => {
   if (req.path.startsWith('/api/')) return res.status(404).json({ error: 'not found' });
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
