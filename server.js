@@ -54,25 +54,37 @@ app.post('/enhance', async (req, res) => {
     if (!code || !code.trim()) return res.status(400).json({ error: 'No code provided' });
     if (!process.env.GROQ_API_KEY) return res.status(500).json({ error: 'GROQ_API_KEY not set' });
 
-    const completion = await groq.chat.completions.create({
+    const systemPrompt = 'You are a world-class ' + language + ' developer and security expert. Your job is to take buggy code and rewrite it to be PERFECT scoring 95-100/100 on a code quality analyzer.\n\nYou MUST fix ALL of these:\n1. BUGS - off-by-one errors, null pointer, array out of bounds, wrong logic\n2. SECURITY - SQL injection (use prepared statements), input validation, sanitization\n3. ERROR HANDLING - never use unwrap() without handling, always handle exceptions\n4. NAMING - use clear descriptive names, no single letter variables except loop counters\n5. STYLE - proper indentation, comments, docstrings, follow language conventions\n6. PERFORMANCE - avoid unnecessary loops, use efficient data structures\n7. BEST PRACTICES - follow SOLID principles, proper structure, main function if needed\n\nReturn ONLY the fully fixed production-ready code. No markdown fences. No explanation. No comments about what changed. Just perfect clean code that scores 95+.';
+
+    // First pass - fix all issues
+    const pass1 = await groq.chat.completions.create({
       model: MODEL,
       temperature: 0.1,
       max_tokens: 4096,
       messages: [
-        {
-          role: 'system',
-          content: 'Fix ALL bugs, security issues, style and performance problems. Return ONLY fixed code. No markdown. No explanation.'
-        },
-        {
-          role: 'user',
-          content: 'Fix this ' + language + ' code:\n' + code
-        }
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: 'Fix this ' + language + ' code to score 95-100/100:\n' + code }
       ]
     });
 
-    let enhanced = completion.choices[0].message.content || code;
+    let enhanced = pass1.choices[0].message.content || code;
     enhanced = enhanced.replace(/^```[\w]*\n?/gm, '').replace(/^```$/gm, '').trim();
-    return res.json({ enhanced });
+
+    // Second pass - make it even better
+    const pass2 = await groq.chat.completions.create({
+      model: MODEL,
+      temperature: 0.1,
+      max_tokens: 4096,
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: 'This code needs to score 95-100/100. Review it one more time and fix any remaining issues:\n' + enhanced }
+      ]
+    });
+
+    let final = pass2.choices[0].message.content || enhanced;
+    final = final.replace(/^```[\w]*\n?/gm, '').replace(/^```$/gm, '').trim();
+
+    return res.json({ enhanced: final });
 
   } catch (e) {
     console.error('Enhance error:', e.message);
