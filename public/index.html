@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>CodePiolet — God-Mode Analyzer</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg:        #080b0f;
+  --surface:   #0d1117;
+  --surface2:  #161b22;
+  --surface3:  #1c2333;
+  --border:    #21262d;
+  --border2:   #30363d;
+  --cyan:      #39d0d8;
+  --green:     #3fb950;
+  --yellow:    #d29922;
+  --orange:    #f0883e;
+  --red:       #f85149;
+  --pink:      #ff7b9c;
+  --text:      #c9d1d9;
+  --text2:     #8b949e;
+  --text3:     #484f58;
+  --white:     #f0f6fc;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.04) 2px, rgba(0,0,0,0.04) 4px);
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* HEADER */
+.header {
+  border-bottom: 1px solid var(--border);
+  padding: 16px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(13,17,23,0.97);
+  backdrop-filter: blur(12px);
+  position: sticky; top: 0; z-index: 100;
+}
+.logo { display: flex; align-items: center; gap: 12px; }
+.logo-mark {
+  width: 36px; height: 36px;
+  background: linear-gradient(135deg, var(--cyan), #0d7db3);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  box-shadow: 0 0 20px rgba(57,208,216,0.25);
+}
+.logo-name { font-family: 'Bebas Neue', sans-serif; font-size: 26px; letter-spacing: 2px; color: var(--white); }
+.logo-name span { color: var(--cyan); }
+.header-tag {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  color: var(--text3);
+  border: 1px solid var(--border2);
+  padding: 3px 10px;
+  border-radius: 20px;
+  letter-spacing: 1px;
+}
+
+/* WORKSPACE */
+.workspace {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  height: calc(100vh - 69px);
+}
+
+/* EDITOR SIDE */
+.editor-side {
+  display: flex; flex-direction: column;
+  border-right: 1px solid var(--border);
+  overflow: hidden;
+}
+.editor-toolbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  flex-shrink: 0;
+}
+.toolbar-left { display: flex; align-items: center; gap: 8px; }
+.toolbar-right { display: flex; align-items: center; gap: 8px; }
+.win-dots { display: flex; gap: 5px; }
+.win-dot { width: 11px; height: 11px; border-radius: 50%; }
+.wd-r { background: #ff5f56; } .wd-y { background: #febc2e; } .wd-g { background: #28c840; }
+.file-label {
+  font-family: 'Space Mono', monospace; font-size: 11px; color: var(--text2);
+  padding: 4px 10px; background: var(--surface2); border: 1px solid var(--border); border-radius: 6px;
+}
+.lang-select {
+  background: var(--surface3); border: 1px solid var(--border2); color: var(--text);
+  border-radius: 6px; padding: 5px 10px;
+  font-family: 'Space Mono', monospace; font-size: 11px; outline: none; cursor: pointer;
+}
+.kb-hint { font-size: 10px; color: var(--text3); font-family: 'Space Mono', monospace; }
+.editor-wrap { position: relative; flex: 1; overflow: hidden; }
+#codeInput {
+  width: 100%; height: 100%;
+  background: var(--surface); border: none; outline: none;
+  color: #a8d8a8;
+  font-family: 'Space Mono', monospace; font-size: 13px; line-height: 1.75;
+  padding: 20px; resize: none; tab-size: 2; caret-color: var(--cyan);
+}
+#codeInput::placeholder { color: var(--text3); font-style: italic; }
+
+/* ACTION BAR */
+.action-bar {
+  display: flex; gap: 10px; padding: 12px 16px;
+  border-top: 1px solid var(--border); background: var(--surface); flex-shrink: 0;
+}
+.btn {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 20px; border: none; border-radius: 8px;
+  font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: all 0.15s; letter-spacing: 0.3px; white-space: nowrap;
+}
+.btn:active { transform: scale(0.97); }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none !important; }
+.btn-analyze {
+  background: linear-gradient(135deg, var(--cyan), #0d7db3); color: #000;
+  flex: 1; justify-content: center;
+  box-shadow: 0 4px 20px rgba(57,208,216,0.2);
+}
+.btn-analyze:hover:not(:disabled) { box-shadow: 0 6px 28px rgba(57,208,216,0.4); transform: translateY(-1px); }
+.btn-enhance {
+  background: linear-gradient(135deg, #7c3aed, var(--pink)); color: #fff;
+  flex: 1; justify-content: center;
+  box-shadow: 0 4px 20px rgba(124,58,237,0.2);
+}
+.btn-enhance:hover:not(:disabled) { box-shadow: 0 6px 28px rgba(124,58,237,0.4); transform: translateY(-1px); }
+.btn-clear {
+  background: var(--surface2); color: var(--text2); border: 1px solid var(--border2);
+}
+.btn-clear:hover:not(:disabled) { border-color: var(--red); color: var(--red); }
+
+.spinner {
+  width: 14px; height: 14px;
+  border: 2px solid rgba(0,0,0,0.25); border-top-color: #000;
+  border-radius: 50%; animation: spin 0.6s linear infinite; display: none;
+}
+.spinner.white { border-color: rgba(255,255,255,0.25); border-top-color: #fff; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* RESULTS SIDE */
+.results-side {
+  display: flex; flex-direction: column;
+  overflow: hidden; background: var(--surface);
+}
+
+/* SCORE */
+.score-section {
+  padding: 24px; border-bottom: 1px solid var(--border); flex-shrink: 0;
+}
+.score-header {
+  display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;
+}
+.score-title { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 2px; color: var(--text2); }
+.score-badge {
+  font-family: 'Space Mono', monospace; font-size: 10px;
+  padding: 3px 10px; border-radius: 20px;
+  border: 1px solid var(--border2); color: var(--text3); background: var(--surface2);
+}
+.score-badge.done { border-color: rgba(63,185,80,0.4); color: var(--green); background: rgba(63,185,80,0.08); }
+.score-badge.scanning { border-color: rgba(57,208,216,0.4); color: var(--cyan); background: rgba(57,208,216,0.08); }
+.score-display { display: flex; align-items: center; gap: 20px; }
+.score-ring-wrap { position: relative; width: 100px; height: 100px; flex-shrink: 0; }
+.score-ring-wrap svg { transform: rotate(-90deg); }
+.score-track { fill: none; stroke: var(--surface3); stroke-width: 7; }
+.score-fill {
+  fill: none; stroke-width: 7; stroke-linecap: round;
+  stroke-dasharray: 252; stroke-dashoffset: 252;
+  transition: stroke-dashoffset 1.2s cubic-bezier(0.34,1.56,0.64,1), stroke 0.5s;
+}
+.score-center-text {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%); text-align: center; line-height: 1;
+}
+.score-number { font-family: 'Bebas Neue', sans-serif; font-size: 32px; color: var(--white); }
+.score-pct { font-size: 11px; color: var(--text3); font-family: 'Space Mono', monospace; }
+.score-info { flex: 1; }
+.score-grade { font-family: 'Bebas Neue', sans-serif; font-size: 24px; letter-spacing: 1px; margin-bottom: 8px; }
+.score-summary { font-size: 12px; color: var(--text2); line-height: 1.6; }
+.stat-pills { display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
+.pill {
+  display: flex; align-items: center; gap: 5px;
+  padding: 5px 12px; border-radius: 20px;
+  font-family: 'Space Mono', monospace; font-size: 11px;
+  background: var(--surface2); border: 1px solid var(--border); color: var(--text2);
+}
+.pill.bugs     { border-color: rgba(248,81,73,0.4);  color: var(--red);    background: rgba(248,81,73,0.08); }
+.pill.security { border-color: rgba(240,136,62,0.4); color: var(--orange); background: rgba(240,136,62,0.08); }
+.pill.style    { border-color: rgba(57,208,216,0.3); color: var(--cyan);   background: rgba(57,208,216,0.06); }
+.pill.perf     { border-color: rgba(63,185,80,0.4);  color: var(--green);  background: rgba(63,185,80,0.08); }
+
+/* ISSUES */
+.issues-section { flex: 1; overflow: hidden; display: flex; flex-direction: column; }
+.issues-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 20px; border-bottom: 1px solid var(--border); flex-shrink: 0;
+}
+.issues-title { font-family: 'Bebas Neue', sans-serif; font-size: 16px; letter-spacing: 2px; color: var(--text2); }
+.issues-count { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--text3); }
+#issuesList { flex: 1; overflow-y: auto; padding: 12px; }
+#issuesList::-webkit-scrollbar { width: 4px; }
+#issuesList::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
+.empty-state {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  height: 100%; gap: 12px; color: var(--text3); text-align: center; padding: 20px;
+}
+.empty-icon { font-size: 40px; opacity: 0.4; }
+.empty-title { font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 1px; }
+.empty-sub { font-size: 12px; line-height: 1.6; }
+.issue-card {
+  border-radius: 8px; padding: 12px 14px; margin-bottom: 8px;
+  border: 1px solid transparent; display: flex; gap: 12px;
+  animation: issueIn 0.25s ease both;
+  transition: transform 0.15s;
+}
+.issue-card:hover { transform: translateX(2px); }
+@keyframes issueIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+.issue-card.critical { background: rgba(248,81,73,0.08);  border-color: rgba(248,81,73,0.25); }
+.issue-card.error    { background: rgba(240,136,62,0.08); border-color: rgba(240,136,62,0.25); }
+.issue-card.warning  { background: rgba(210,153,34,0.08); border-color: rgba(210,153,34,0.25); }
+.issue-card.info     { background: rgba(57,208,216,0.06); border-color: rgba(57,208,216,0.15); }
+.issue-card.good     { background: rgba(63,185,80,0.06);  border-color: rgba(63,185,80,0.15); }
+.issue-sev-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+.critical .issue-sev-dot { background: var(--red); box-shadow: 0 0 6px rgba(248,81,73,0.5); }
+.error    .issue-sev-dot { background: var(--orange); }
+.warning  .issue-sev-dot { background: var(--yellow); }
+.info     .issue-sev-dot { background: var(--cyan); }
+.good     .issue-sev-dot { background: var(--green); }
+.issue-body { flex: 1; min-width: 0; }
+.issue-line { font-family: 'Space Mono', monospace; font-size: 9px; color: var(--text3); margin-bottom: 3px; text-transform: uppercase; letter-spacing: 1px; }
+.issue-msg { font-size: 12px; font-weight: 500; color: var(--text); margin-bottom: 3px; line-height: 1.4; }
+.issue-detail { font-size: 11px; color: var(--text2); line-height: 1.5; }
+
+/* STATUS BAR */
+.status-bar {
+  padding: 8px 20px; border-top: 1px solid var(--border);
+  font-family: 'Space Mono', monospace; font-size: 10px; color: var(--text3);
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--surface2); flex-shrink: 0;
+}
+#statusText { color: var(--text2); transition: color 0.3s; }
+#statusText.ok  { color: var(--green); }
+#statusText.err { color: var(--red); }
+#statusText.working { color: var(--cyan); }
+
+/* TOAST */
+.toast {
+  position: fixed; bottom: 24px; left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: var(--surface3); border: 1px solid var(--border2);
+  border-radius: 10px; padding: 12px 20px;
+  font-size: 13px; font-weight: 500; color: var(--white);
+  z-index: 9997; transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s;
+  opacity: 0; white-space: nowrap; box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+}
+.toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+.toast.success { border-color: rgba(63,185,80,0.5); }
+.toast.error   { border-color: rgba(248,81,73,0.5); }
+
+@keyframes glow-pulse {
+  0%,100% { box-shadow: 0 0 20px rgba(57,208,216,0.15); }
+  50%      { box-shadow: 0 0 40px rgba(57,208,216,0.35); }
+}
+.btn-analyze.loading { animation: glow-pulse 1s ease infinite; }
+
+@media (max-width: 900px) {
+  .workspace { grid-template-columns: 1fr; height: auto; }
+  .editor-side { height: 60vh; border-right: none; border-bottom: 1px solid var(--border); }
+  .results-side { min-height: 500px; }
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="logo">
+    <div class="logo-mark">⚡</div>
+    <div class="logo-name">Code<span>Piolet</span></div>
+  </div>
+  <div class="header-tag">GOD-MODE ANALYZER</div>
+</header>
+
+<div class="workspace">
+  <!-- EDITOR -->
+  <div class="editor-side">
+    <div class="editor-toolbar">
+      <div class="toolbar-left">
+        <div class="win-dots">
+          <div class="win-dot wd-r"></div>
+          <div class="win-dot wd-y"></div>
+          <div class="win-dot wd-g"></div>
+        </div>
+        <div class="file-label" id="fileLabel">untitled.js</div>
+      </div>
+      <div class="toolbar-right">
+        <select class="lang-select" id="langSelect" onchange="updateFileLabel()">
+          <option value="javascript">JavaScript</option>
+          <option value="python">Python</option>
+          <option value="cpp">C++</option>
+          <option value="java">Java</option>
+          <option value="typescript">TypeScript</option>
+          <option value="go">Go</option>
+          <option value="rust">Rust</option>
+          <option value="php">PHP</option>
+        </select>
+        <span class="kb-hint">Ctrl+Enter to analyze</span>
+      </div>
+    </div>
+
+    <div class="editor-wrap">
+      <textarea id="codeInput" spellcheck="false"
+        placeholder="// Paste your code here and click Analyze...&#10;// Ctrl+Enter for quick analysis"
+      >function calculateTotal(items) {
+    let total = 0;
+    for(let i = 0; i <= items.length; i++) {
+        total += items[i].price;
+    }
+    return total;
+}
+
+const userInput = "'; DROP TABLE users; --";
+const query = `SELECT * FROM users WHERE id = '${userInput}'`;</textarea>
+    </div>
+
+    <div class="action-bar">
+      <button class="btn btn-analyze" id="analyzeBtn" onclick="analyzeCode()">
+        <div class="spinner" id="analyzeSpinner"></div>
+        <span id="analyzeBtnText">🔍 Analyze</span>
+      </button>
+      <button class="btn btn-enhance" id="enhanceBtn" onclick="enhanceCode()" disabled>
+        <div class="spinner white" id="enhanceSpinner"></div>
+        <span id="enhanceBtnText">✨ Enhance</span>
+      </button>
+      <button class="btn btn-clear" onclick="clearAll()">🗑</button>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="results-side">
+    <div class="score-section">
+      <div class="score-header">
+        <span class="score-title">Quality Score</span>
+        <span class="score-badge" id="scoreBadge">READY</span>
+      </div>
+      <div class="score-display">
+        <div class="score-ring-wrap">
+          <svg viewBox="0 0 100 100" width="100" height="100">
+            <circle class="score-track" cx="50" cy="50" r="40"/>
+            <circle class="score-fill" id="scoreFill" cx="50" cy="50" r="40"/>
+          </svg>
+          <div class="score-center-text">
+            <div class="score-number" id="scoreNumber">—</div>
+            <div class="score-pct" id="scorePct"></div>
+          </div>
+        </div>
+        <div class="score-info">
+          <div class="score-grade" id="scoreGrade" style="color:var(--text3)">Awaiting Analysis</div>
+          <div class="score-summary" id="scoreSummary">Paste code and click Analyze.</div>
+        </div>
+      </div>
+      <div class="stat-pills" id="statPills">
+        <div class="pill bugs">🐛 Bugs: —</div>
+        <div class="pill security">🔒 Security: —</div>
+        <div class="pill style">✨ Style: —</div>
+        <div class="pill perf">⚡ Perf: —</div>
+      </div>
+    </div>
+
+    <div class="issues-section">
+      <div class="issues-header">
+        <span class="issues-title">Issues</span>
+        <span class="issues-count" id="issuesCount">—</span>
+      </div>
+      <div id="issuesList">
+        <div class="empty-state">
+          <div class="empty-icon">🔬</div>
+          <div class="empty-title">No Analysis Yet</div>
+          <div class="empty-sub">Paste code and click <strong>Analyze</strong>.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="status-bar">
+      <span id="statusText">Ready</span>
+      <span id="lineCount">0 lines</span>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const EXT_MAP = { javascript:'js', python:'py', cpp:'cpp', java:'java', typescript:'ts', go:'go', rust:'rs', php:'php' };
+let isAnalyzing = false;
+let isEnhancing = false;
+
+// ── HELPERS ──
+function toast(msg, type='info', dur=3000) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = `toast show ${type}`;
+  setTimeout(() => el.className = 'toast', dur);
+}
+function setStatus(msg, cls='') {
+  const el = document.getElementById('statusText');
+  el.textContent = msg; el.className = cls;
+}
+function updateFileLabel() {
+  const lang = document.getElementById('langSelect').value;
+  document.getElementById('fileLabel').textContent = `analysis.${EXT_MAP[lang]||lang}`;
+}
+function updateLineCount() {
+  const lines = document.getElementById('codeInput').value.split('\n').length;
+  document.getElementById('lineCount').textContent = `${lines} line${lines!==1?'s':''}`;
+}
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+document.getElementById('codeInput').addEventListener('input', updateLineCount);
+document.getElementById('codeInput').addEventListener('keydown', e => {
+  if (e.ctrlKey && e.key === 'Enter') { e.preventDefault(); analyzeCode(); }
+});
+updateLineCount(); updateFileLabel();
+
+// ── SCORE RING ──
+function animateScore(score) {
+  const fill = document.getElementById('scoreFill');
+  const numEl = document.getElementById('scoreNumber');
+  const pctEl = document.getElementById('scorePct');
+  let color = score >= 85 ? '#3fb950' : score >= 65 ? '#39d0d8' : score >= 45 ? '#d29922' : '#f85149';
+  fill.style.stroke = color;
+  fill.style.strokeDashoffset = 252 - (score / 100) * 252;
+  let cur = 0;
+  const step = score / 50;
+  const t = setInterval(() => {
+    cur = Math.min(score, cur + step);
+    numEl.textContent = Math.round(cur);
+    numEl.style.color = color;
+    if (cur >= score) clearInterval(t);
+  }, 20);
+  pctEl.textContent = '%';
+}
+function gradeInfo(s) {
+  if (s >= 90) return { label:'EXCELLENT', color:'#3fb950' };
+  if (s >= 75) return { label:'GOOD',      color:'#39d0d8' };
+  if (s >= 55) return { label:'FAIR',      color:'#d29922' };
+  if (s >= 35) return { label:'POOR',      color:'#f0883e' };
+  return              { label:'CRITICAL',  color:'#f85149' };
+}
+
+// ── RENDER RESULTS ──
+function renderResults(data) {
+  animateScore(data.score);
+  const grade = gradeInfo(data.score);
+  const gradeEl = document.getElementById('scoreGrade');
+  gradeEl.textContent = grade.label;
+  gradeEl.style.color = grade.color;
+  document.getElementById('scoreSummary').textContent = data.summary || '';
+  document.getElementById('scoreBadge').textContent = 'COMPLETE';
+  document.getElementById('scoreBadge').className = 'score-badge done';
+  document.getElementById('statPills').innerHTML = `
+    <div class="pill bugs">🐛 Bugs: ${data.bugs??0}</div>
+    <div class="pill security">🔒 Security: ${data.security??0}</div>
+    <div class="pill style">✨ Style: ${data.style??0}</div>
+    <div class="pill perf">⚡ Perf: ${data.performance??0}</div>`;
+
+  const issues = data.issues || [];
+  document.getElementById('issuesCount').textContent = `${issues.length} issue${issues.length!==1?'s':''}`;
+  const list = document.getElementById('issuesList');
+
+  if (!issues.length) {
+    list.innerHTML = `<div class="empty-state"><div class="empty-icon">✅</div><div class="empty-title">All Clear</div><div class="empty-sub">No issues found!</div></div>`;
+    return;
+  }
+  list.innerHTML = issues.map((issue, i) => `
+    <div class="issue-card ${(issue.severity||'info').toLowerCase()}" style="animation-delay:${i*50}ms">
+      <div class="issue-sev-dot"></div>
+      <div class="issue-body">
+        <div class="issue-line">${(issue.severity||'INFO').toUpperCase()} ${issue.line ? `· Line ${issue.line}` : ''} ${issue.category ? `· ${issue.category}` : ''}</div>
+        <div class="issue-msg">${escHtml(issue.title||issue.message||'')}</div>
+        ${issue.detail ? `<div class="issue-detail">${escHtml(issue.detail)}</div>` : ''}
+      </div>
+    </div>`).join('');
+}
+
+// ── ANALYZE ──
+async function analyzeCode() {
+  if (isAnalyzing) return;
+  const code = document.getElementById('codeInput').value.trim();
+  if (!code) { toast('⚠️ Paste some code first!', 'error'); return; }
+  const lang = document.getElementById('langSelect').value;
+
+  isAnalyzing = true;
+  const btn = document.getElementById('analyzeBtn');
+  btn.disabled = true; btn.classList.add('loading');
+  document.getElementById('analyzeSpinner').style.display = 'block';
+  document.getElementById('analyzeBtnText').textContent = 'Analyzing...';
+  document.getElementById('scoreBadge').textContent = 'SCANNING';
+  document.getElementById('scoreBadge').className = 'score-badge scanning';
+  document.getElementById('scoreFill').style.strokeDashoffset = 252;
+  document.getElementById('scoreNumber').textContent = '—';
+  document.getElementById('scorePct').textContent = '';
+  document.getElementById('scoreGrade').textContent = 'Analyzing...';
+  document.getElementById('scoreGrade').style.color = 'var(--cyan)';
+  document.getElementById('issuesList').innerHTML = `
+    <div class="empty-state">
+      <div class="empty-icon">⚙️</div>
+      <div class="empty-title">Deep Scanning</div>
+      <div class="empty-sub">Claude is reading every line...</div>
+    </div>`;
+  setStatus('Running deep analysis...', 'working');
+
+  try {
+    const res = await fetch('/api/analyze', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code, language: lang })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || `Server error ${res.status}`);
+
+    renderResults(data);
+    document.getElementById('enhanceBtn').disabled = false;
+    setStatus(`✓ Done — score: ${data.score}%`, 'ok');
+    toast(`✅ Analysis complete! Score: ${data.score}%`, 'success');
+
+  } catch (err) {
+    console.error(err);
+    setStatus('Analysis failed', 'err');
+    toast(`❌ ${err.message}`, 'error', 5000);
+    document.getElementById('scoreGrade').textContent = 'Error';
+    document.getElementById('scoreGrade').style.color = 'var(--red)';
+    document.getElementById('scoreSummary').textContent = err.message;
+    document.getElementById('issuesList').innerHTML = `
+      <div class="empty-state"><div class="empty-icon">⚠️</div>
+      <div class="empty-title">Failed</div>
+      <div class="empty-sub">${escHtml(err.message)}</div></div>`;
+  }
+
+  isAnalyzing = false;
+  btn.disabled = false; btn.classList.remove('loading');
+  document.getElementById('analyzeSpinner').style.display = 'none';
+  document.getElementById('analyzeBtnText').textContent = '🔍 Analyze';
+}
+
+// ── ENHANCE ──
+async function enhanceCode() {
+  if (isEnhancing) return;
+  const code = document.getElementById('codeInput').value.trim();
+  if (!code) { toast('⚠️ No code to enhance!', 'error'); return; }
+  const lang = document.getElementById('langSelect').value;
+
+  isEnhancing = true;
+  const btn = document.getElementById('enhanceBtn');
+  btn.disabled = true;
+  document.getElementById('enhanceSpinner').style.display = 'block';
+  document.getElementById('enhanceBtnText').textContent = 'Enhancing...';
+  setStatus('Generating enhanced code...', 'working');
+
+  try {
+    const res = await fetch('/api/enhance', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code, language: lang })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || `Server error ${res.status}`);
+
+    document.getElementById('codeInput').value = data.enhanced;
+    updateLineCount();
+    document.getElementById('issuesList').innerHTML = `
+      <div class="empty-state"><div class="empty-icon">✨</div>
+      <div class="empty-title">Code Enhanced</div>
+      <div class="empty-sub">Re-analyzing improved code...</div></div>`;
+    toast('✨ Enhanced! Re-analyzing...', 'success');
+    setStatus('Enhanced — re-analyzing...', 'ok');
+    setTimeout(() => analyzeCode(), 400);
+
+  } catch (err) {
+    console.error(err);
+    setStatus('Enhancement failed', 'err');
+    toast(`❌ ${err.message}`, 'error', 5000);
+  }
+
+  isEnhancing = false;
+  btn.disabled = false;
+  document.getElementById('enhanceSpinner').style.display = 'none';
+  document.getElementById('enhanceBtnText').textContent = '✨ Enhance';
+}
+
+// ── CLEAR ──
+function clearAll() {
+  document.getElementById('codeInput').value = '';
+  updateLineCount();
+  document.getElementById('scoreFill').style.strokeDashoffset = 252;
+  document.getElementById('scoreFill').style.stroke = 'transparent';
+  document.getElementById('scoreNumber').textContent = '—';
+  document.getElementById('scorePct').textContent = '';
+  document.getElementById('scoreGrade').textContent = 'Awaiting Analysis';
+  document.getElementById('scoreGrade').style.color = 'var(--text3)';
+  document.getElementById('scoreSummary').textContent = 'Paste code and click Analyze.';
+  document.getElementById('scoreBadge').textContent = 'READY';
+  document.getElementById('scoreBadge').className = 'score-badge';
+  document.getElementById('statPills').innerHTML = `
+    <div class="pill bugs">🐛 Bugs: —</div>
+    <div class="pill security">🔒 Security: —</div>
+    <div class="pill style">✨ Style: —</div>
+    <div class="pill perf">⚡ Perf: —</div>`;
+  document.getElementById('issuesList').innerHTML = `
+    <div class="empty-state"><div class="empty-icon">🔬</div>
+    <div class="empty-title">No Analysis Yet</div>
+    <div class="empty-sub">Paste code and click <strong>Analyze</strong>.</div></div>`;
+  document.getElementById('issuesCount').textContent = '—';
+  document.getElementById('enhanceBtn').disabled = true;
+  setStatus('Ready', '');
+  toast('🗑 Cleared', 'info', 1500);
+}
+</script>
+</body>
+</html>
