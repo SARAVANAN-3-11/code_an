@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>CodePiolet — God-Mode Analyzer</title>
+<title>CodePiolet â€” God-Mode Analyzer</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
 :root {
@@ -292,7 +292,7 @@ body::before {
 
 <header class="header">
   <div class="logo">
-    <div class="logo-mark">⚡</div>
+    <div class="logo-mark">âš¡</div>
     <div class="logo-name">Code<span>Piolet</span></div>
   </div>
   <div class="header-tag">GOD-MODE ANALYZER</div>
@@ -343,13 +343,13 @@ const query = `SELECT * FROM users WHERE id = '${userInput}'`;</textarea>
     <div class="action-bar">
       <button class="btn btn-analyze" id="analyzeBtn" onclick="analyzeCode()">
         <div class="spinner" id="analyzeSpinner"></div>
-        <span id="analyzeBtnText">🔍 Analyze</span>
+        <span id="analyzeBtnText">ðŸ” Analyze</span>
       </button>
       <button class="btn btn-enhance" id="enhanceBtn" onclick="enhanceCode()" disabled>
         <div class="spinner white" id="enhanceSpinner"></div>
-        <span id="enhanceBtnText">✨ Enhance</span>
+        <span id="enhanceBtnText">âœ¨ Enhance</span>
       </button>
-      <button class="btn btn-clear" onclick="clearAll()">🗑</button>
+      <button class="btn btn-clear" onclick="clearAll()">ðŸ—‘</button>
     </div>
   </div>
 
@@ -367,7 +367,7 @@ const query = `SELECT * FROM users WHERE id = '${userInput}'`;</textarea>
             <circle class="score-fill" id="scoreFill" cx="50" cy="50" r="40"/>
           </svg>
           <div class="score-center-text">
-            <div class="score-number" id="scoreNumber">—</div>
+            <div class="score-number" id="scoreNumber">â€”</div>
             <div class="score-pct" id="scorePct"></div>
           </div>
         </div>
@@ -377,21 +377,21 @@ const query = `SELECT * FROM users WHERE id = '${userInput}'`;</textarea>
         </div>
       </div>
       <div class="stat-pills" id="statPills">
-        <div class="pill bugs">🐛 Bugs: —</div>
-        <div class="pill security">🔒 Security: —</div>
-        <div class="pill style">✨ Style: —</div>
-        <div class="pill perf">⚡ Perf: —</div>
+        <div class="pill bugs">ðŸ› Bugs: â€”</div>
+        <div class="pill security">ðŸ”’ Security: â€”</div>
+        <div class="pill style">âœ¨ Style: â€”</div>
+        <div class="pill perf">âš¡ Perf: â€”</div>
       </div>
     </div>
 
     <div class="issues-section">
       <div class="issues-header">
         <span class="issues-title">Issues</span>
-        <span class="issues-count" id="issuesCount">—</span>
+        <span class="issues-count" id="issuesCount">â€”</span>
       </div>
       <div id="issuesList">
         <div class="empty-state">
-          <div class="empty-icon">🔬</div>
+          <div class="empty-icon">ðŸ”¬</div>
           <div class="empty-title">No Analysis Yet</div>
           <div class="empty-sub">Paste code and click <strong>Analyze</strong>.</div>
         </div>
@@ -412,7 +412,7 @@ const EXT_MAP = { javascript:'js', python:'py', cpp:'cpp', java:'java', typescri
 let isAnalyzing = false;
 let isEnhancing = false;
 
-// ── HELPERS ──
+// â”€â”€ HELPERS â”€â”€
 function toast(msg, type='info', dur=3000) {
   const el = document.getElementById('toast');
   el.textContent = msg;
@@ -441,7 +441,7 @@ document.getElementById('codeInput').addEventListener('keydown', e => {
 });
 updateLineCount(); updateFileLabel();
 
-// ── SCORE RING ──
+// â”€â”€ SCORE RING â”€â”€
 function animateScore(score) {
   const fill = document.getElementById('scoreFill');
   const numEl = document.getElementById('scoreNumber');
@@ -467,7 +467,7 @@ function gradeInfo(s) {
   return              { label:'CRITICAL',  color:'#f85149' };
 }
 
-// ── RENDER RESULTS ──
+// â”€â”€ RENDER RESULTS â”€â”€
 function renderResults(data) {
   animateScore(data.score);
   const grade = gradeInfo(data.score);
@@ -478,35 +478,35 @@ function renderResults(data) {
   document.getElementById('scoreBadge').textContent = 'COMPLETE';
   document.getElementById('scoreBadge').className = 'score-badge done';
   document.getElementById('statPills').innerHTML = `
-    <div class="pill bugs">🐛 Bugs: ${data.bugs??0}</div>
-    <div class="pill security">🔒 Security: ${data.security??0}</div>
-    <div class="pill style">✨ Style: ${data.style??0}</div>
-    <div class="pill perf">⚡ Perf: ${data.performance??0}</div>`;
+    <div class="pill bugs">ðŸ› Bugs: ${data.bugs??0}</div>
+    <div class="pill security">ðŸ”’ Security: ${data.security??0}</div>
+    <div class="pill style">âœ¨ Style: ${data.style??0}</div>
+    <div class="pill perf">âš¡ Perf: ${data.performance??0}</div>`;
 
   const issues = data.issues || [];
   document.getElementById('issuesCount').textContent = `${issues.length} issue${issues.length!==1?'s':''}`;
   const list = document.getElementById('issuesList');
 
   if (!issues.length) {
-    list.innerHTML = `<div class="empty-state"><div class="empty-icon">✅</div><div class="empty-title">All Clear</div><div class="empty-sub">No issues found!</div></div>`;
+    list.innerHTML = `<div class="empty-state"><div class="empty-icon">âœ…</div><div class="empty-title">All Clear</div><div class="empty-sub">No issues found!</div></div>`;
     return;
   }
   list.innerHTML = issues.map((issue, i) => `
     <div class="issue-card ${(issue.severity||'info').toLowerCase()}" style="animation-delay:${i*50}ms">
       <div class="issue-sev-dot"></div>
       <div class="issue-body">
-        <div class="issue-line">${(issue.severity||'INFO').toUpperCase()} ${issue.line ? `· Line ${issue.line}` : ''} ${issue.category ? `· ${issue.category}` : ''}</div>
+        <div class="issue-line">${(issue.severity||'INFO').toUpperCase()} ${issue.line ? `Â· Line ${issue.line}` : ''} ${issue.category ? `Â· ${issue.category}` : ''}</div>
         <div class="issue-msg">${escHtml(issue.title||issue.message||'')}</div>
         ${issue.detail ? `<div class="issue-detail">${escHtml(issue.detail)}</div>` : ''}
       </div>
     </div>`).join('');
 }
 
-// ── ANALYZE ──
+// â”€â”€ ANALYZE â”€â”€
 async function analyzeCode() {
   if (isAnalyzing) return;
   const code = document.getElementById('codeInput').value.trim();
-  if (!code) { toast('⚠️ Paste some code first!', 'error'); return; }
+  if (!code) { toast('âš ï¸ Paste some code first!', 'error'); return; }
   const lang = document.getElementById('langSelect').value;
 
   isAnalyzing = true;
@@ -517,13 +517,13 @@ async function analyzeCode() {
   document.getElementById('scoreBadge').textContent = 'SCANNING';
   document.getElementById('scoreBadge').className = 'score-badge scanning';
   document.getElementById('scoreFill').style.strokeDashoffset = 252;
-  document.getElementById('scoreNumber').textContent = '—';
+  document.getElementById('scoreNumber').textContent = 'â€”';
   document.getElementById('scorePct').textContent = '';
   document.getElementById('scoreGrade').textContent = 'Analyzing...';
   document.getElementById('scoreGrade').style.color = 'var(--cyan)';
   document.getElementById('issuesList').innerHTML = `
     <div class="empty-state">
-      <div class="empty-icon">⚙️</div>
+      <div class="empty-icon">âš™ï¸</div>
       <div class="empty-title">Deep Scanning</div>
       <div class="empty-sub">Claude is reading every line...</div>
     </div>`;
@@ -540,18 +540,18 @@ async function analyzeCode() {
 
     renderResults(data);
     document.getElementById('enhanceBtn').disabled = false;
-    setStatus(`✓ Done — score: ${data.score}%`, 'ok');
-    toast(`✅ Analysis complete! Score: ${data.score}%`, 'success');
+    setStatus(`âœ“ Done â€” score: ${data.score}%`, 'ok');
+    toast(`âœ… Analysis complete! Score: ${data.score}%`, 'success');
 
   } catch (err) {
     console.error(err);
     setStatus('Analysis failed', 'err');
-    toast(`❌ ${err.message}`, 'error', 5000);
+    toast(`âŒ ${err.message}`, 'error', 5000);
     document.getElementById('scoreGrade').textContent = 'Error';
     document.getElementById('scoreGrade').style.color = 'var(--red)';
     document.getElementById('scoreSummary').textContent = err.message;
     document.getElementById('issuesList').innerHTML = `
-      <div class="empty-state"><div class="empty-icon">⚠️</div>
+      <div class="empty-state"><div class="empty-icon">âš ï¸</div>
       <div class="empty-title">Failed</div>
       <div class="empty-sub">${escHtml(err.message)}</div></div>`;
   }
@@ -559,14 +559,14 @@ async function analyzeCode() {
   isAnalyzing = false;
   btn.disabled = false; btn.classList.remove('loading');
   document.getElementById('analyzeSpinner').style.display = 'none';
-  document.getElementById('analyzeBtnText').textContent = '🔍 Analyze';
+  document.getElementById('analyzeBtnText').textContent = 'ðŸ” Analyze';
 }
 
-// ── ENHANCE ──
+// â”€â”€ ENHANCE â”€â”€
 async function enhanceCode() {
   if (isEnhancing) return;
   const code = document.getElementById('codeInput').value.trim();
-  if (!code) { toast('⚠️ No code to enhance!', 'error'); return; }
+  if (!code) { toast('âš ï¸ No code to enhance!', 'error'); return; }
   const lang = document.getElementById('langSelect').value;
 
   isEnhancing = true;
@@ -588,32 +588,32 @@ async function enhanceCode() {
     document.getElementById('codeInput').value = data.enhanced;
     updateLineCount();
     document.getElementById('issuesList').innerHTML = `
-      <div class="empty-state"><div class="empty-icon">✨</div>
+      <div class="empty-state"><div class="empty-icon">âœ¨</div>
       <div class="empty-title">Code Enhanced</div>
       <div class="empty-sub">Re-analyzing improved code...</div></div>`;
-    toast('✨ Enhanced! Re-analyzing...', 'success');
-    setStatus('Enhanced — re-analyzing...', 'ok');
+    toast('âœ¨ Enhanced! Re-analyzing...', 'success');
+    setStatus('Enhanced â€” re-analyzing...', 'ok');
     setTimeout(() => analyzeCode(), 400);
 
   } catch (err) {
     console.error(err);
     setStatus('Enhancement failed', 'err');
-    toast(`❌ ${err.message}`, 'error', 5000);
+    toast(`âŒ ${err.message}`, 'error', 5000);
   }
 
   isEnhancing = false;
   btn.disabled = false;
   document.getElementById('enhanceSpinner').style.display = 'none';
-  document.getElementById('enhanceBtnText').textContent = '✨ Enhance';
+  document.getElementById('enhanceBtnText').textContent = 'âœ¨ Enhance';
 }
 
-// ── CLEAR ──
+// â”€â”€ CLEAR â”€â”€
 function clearAll() {
   document.getElementById('codeInput').value = '';
   updateLineCount();
   document.getElementById('scoreFill').style.strokeDashoffset = 252;
   document.getElementById('scoreFill').style.stroke = 'transparent';
-  document.getElementById('scoreNumber').textContent = '—';
+  document.getElementById('scoreNumber').textContent = 'â€”';
   document.getElementById('scorePct').textContent = '';
   document.getElementById('scoreGrade').textContent = 'Awaiting Analysis';
   document.getElementById('scoreGrade').style.color = 'var(--text3)';
@@ -621,18 +621,18 @@ function clearAll() {
   document.getElementById('scoreBadge').textContent = 'READY';
   document.getElementById('scoreBadge').className = 'score-badge';
   document.getElementById('statPills').innerHTML = `
-    <div class="pill bugs">🐛 Bugs: —</div>
-    <div class="pill security">🔒 Security: —</div>
-    <div class="pill style">✨ Style: —</div>
-    <div class="pill perf">⚡ Perf: —</div>`;
+    <div class="pill bugs">ðŸ› Bugs: â€”</div>
+    <div class="pill security">ðŸ”’ Security: â€”</div>
+    <div class="pill style">âœ¨ Style: â€”</div>
+    <div class="pill perf">âš¡ Perf: â€”</div>`;
   document.getElementById('issuesList').innerHTML = `
-    <div class="empty-state"><div class="empty-icon">🔬</div>
+    <div class="empty-state"><div class="empty-icon">ðŸ”¬</div>
     <div class="empty-title">No Analysis Yet</div>
     <div class="empty-sub">Paste code and click <strong>Analyze</strong>.</div></div>`;
-  document.getElementById('issuesCount').textContent = '—';
+  document.getElementById('issuesCount').textContent = 'â€”';
   document.getElementById('enhanceBtn').disabled = true;
   setStatus('Ready', '');
-  toast('🗑 Cleared', 'info', 1500);
+  toast('ðŸ—‘ Cleared', 'info', 1500);
 }
 </script>
 </body>
