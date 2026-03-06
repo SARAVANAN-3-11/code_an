@@ -10,7 +10,7 @@ app.use(express.json({ limit: '10mb' }));
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
 // Model fallback chain - auto switches if one hits rate limit
-const MODELS = ['llama-3.1-8b-instant','gemma2-9b-it','llama3-70b-8192','meta-llama/llama-4-scout-17b-16e-instruct'];
+const MODELS = ['llama-3.3-70b-versatile','llama-3.1-8b-instant','gemma2-9b-it','qwen-qwq-32b'];
 
 async function callGroq(messages, maxTokens) {
   for (const model of MODELS) {
@@ -111,3 +111,4 @@ app.listen(PORT, () => {
   console.log('Groq key: ' + (process.env.GROQ_API_KEY ? 'SET' : 'MISSING'));
   console.log('Models:', MODELS.join(', '));
 });
+
