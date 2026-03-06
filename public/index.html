@@ -4,46 +4,61 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>CodePiolet — God-Mode Analyzer</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=VT323&display=swap" rel="stylesheet"/>
 <style>
 :root {
-  --bg:        #080b0f;
-  --surface:   #0d1117;
-  --surface2:  #161b22;
-  --surface3:  #1c2333;
-  --border:    #21262d;
-  --border2:   #30363d;
-  --cyan:      #39d0d8;
-  --green:     #3fb950;
-  --yellow:    #d29922;
-  --orange:    #f0883e;
-  --red:       #f85149;
-  --pink:      #ff7b9c;
-  --text:      #c9d1d9;
-  --text2:     #8b949e;
-  --text3:     #484f58;
-  --white:     #f0f6fc;
+  --bg:        #000000;
+  --surface:   #030808;
+  --surface2:  #071010;
+  --surface3:  #0a1a1a;
+  --border:    #0d2d2d;
+  --border2:   #0f3a3a;
+  --cyan:      #00fff5;
+  --green:     #00ff41;
+  --yellow:    #ffff00;
+  --orange:    #ff6b00;
+  --red:       #ff0040;
+  --pink:      #ff00ff;
+  --text:      #a0ffef;
+  --text2:     #4a9e94;
+  --text3:     #1a4a44;
+  --white:     #e0fffa;
 }
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Share Tech Mono', monospace;
   min-height: 100vh;
   overflow-x: hidden;
 }
 body::before {
   content: '';
   position: fixed; inset: 0;
-  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.04) 2px, rgba(0,0,0,0.04) 4px);
+  background: 
+    repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,255,245,0.02) 3px, rgba(0,255,245,0.02) 4px),
+    repeating-linear-gradient(90deg, transparent, transparent 3px, rgba(0,255,65,0.01) 3px, rgba(0,255,65,0.01) 4px);
   pointer-events: none;
   z-index: 9999;
+  animation: scanline 8s linear infinite;
+}
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  background: radial-gradient(ellipse at 50% 0%, rgba(0,255,245,0.06) 0%, transparent 70%),
+              radial-gradient(ellipse at 100% 100%, rgba(0,255,65,0.04) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 1;
+}
+@keyframes scanline {
+  0% { background-position: 0 0; }
+  100% { background-position: 0 100px; }
 }
 
 /* HEADER */
 .header {
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--border); box-shadow: 0 1px 20px rgba(0,255,245,0.1);
   padding: 16px 32px;
   display: flex;
   align-items: center;
@@ -61,10 +76,10 @@ body::before {
   font-size: 18px;
   box-shadow: 0 0 20px rgba(57,208,216,0.25);
 }
-.logo-name { font-family: 'Bebas Neue', sans-serif; font-size: 26px; letter-spacing: 2px; color: var(--white); }
+.logo-name { font-family: 'Orbitron', monospace; font-size: 26px; letter-spacing: 2px; color: var(--white); }
 .logo-name span { color: var(--cyan); }
 .header-tag {
-  font-family: 'Space Mono', monospace;
+  font-family: 'Share Tech Mono', monospace;
   font-size: 10px;
   color: var(--text3);
   border: 1px solid var(--border2);
@@ -83,13 +98,13 @@ body::before {
 /* EDITOR SIDE */
 .editor-side {
   display: flex; flex-direction: column;
-  border-right: 1px solid var(--border);
+  border-right: 1px solid var(--border); box-shadow: inset -1px 0 20px rgba(0,255,245,0.03);
   overflow: hidden;
 }
 .editor-toolbar {
   display: flex; align-items: center; justify-content: space-between;
   padding: 10px 16px;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--border); box-shadow: 0 1px 20px rgba(0,255,245,0.1);
   background: var(--surface);
   flex-shrink: 0;
 }
@@ -99,21 +114,21 @@ body::before {
 .win-dot { width: 11px; height: 11px; border-radius: 50%; }
 .wd-r { background: #ff5f56; } .wd-y { background: #febc2e; } .wd-g { background: #28c840; }
 .file-label {
-  font-family: 'Space Mono', monospace; font-size: 11px; color: var(--text2);
+  font-family: 'Share Tech Mono', monospace; font-size: 11px; color: var(--text2);
   padding: 4px 10px; background: var(--surface2); border: 1px solid var(--border); border-radius: 6px;
 }
 .lang-select {
   background: var(--surface3); border: 1px solid var(--border2); color: var(--text);
   border-radius: 6px; padding: 5px 10px;
-  font-family: 'Space Mono', monospace; font-size: 11px; outline: none; cursor: pointer;
+  font-family: 'Share Tech Mono', monospace; font-size: 11px; outline: none; cursor: pointer;
 }
-.kb-hint { font-size: 10px; color: var(--text3); font-family: 'Space Mono', monospace; }
+.kb-hint { font-size: 10px; color: var(--text3); font-family: 'Share Tech Mono', monospace; }
 .editor-wrap { position: relative; flex: 1; overflow: hidden; }
 #codeInput {
   width: 100%; height: 100%;
   background: var(--surface); border: none; outline: none;
   color: #a8d8a8;
-  font-family: 'Space Mono', monospace; font-size: 13px; line-height: 1.75;
+  font-family: 'Share Tech Mono', monospace; font-size: 13px; line-height: 1.75;
   padding: 20px; resize: none; tab-size: 2; caret-color: var(--cyan);
 }
 #codeInput::placeholder { color: var(--text3); font-style: italic; }
@@ -126,7 +141,7 @@ body::before {
 .btn {
   display: flex; align-items: center; gap: 8px;
   padding: 10px 20px; border: none; border-radius: 8px;
-  font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600;
+  font-family: 'Share Tech Mono', monospace; font-size: 13px; font-weight: 600;
   cursor: pointer; transition: all 0.15s; letter-spacing: 0.3px; white-space: nowrap;
 }
 .btn:active { transform: scale(0.97); }
@@ -164,14 +179,14 @@ body::before {
 
 /* SCORE */
 .score-section {
-  padding: 24px; border-bottom: 1px solid var(--border); flex-shrink: 0;
+  padding: 24px; border-bottom: 1px solid var(--border); box-shadow: 0 1px 20px rgba(0,255,245,0.1); flex-shrink: 0;
 }
 .score-header {
   display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;
 }
-.score-title { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 2px; color: var(--text2); }
+.score-title { font-family: 'Orbitron', monospace; font-size: 20px; letter-spacing: 2px; color: var(--text2); }
 .score-badge {
-  font-family: 'Space Mono', monospace; font-size: 10px;
+  font-family: 'Share Tech Mono', monospace; font-size: 10px;
   padding: 3px 10px; border-radius: 20px;
   border: 1px solid var(--border2); color: var(--text3); background: var(--surface2);
 }
@@ -190,16 +205,16 @@ body::before {
   position: absolute; top: 50%; left: 50%;
   transform: translate(-50%, -50%); text-align: center; line-height: 1;
 }
-.score-number { font-family: 'Bebas Neue', sans-serif; font-size: 32px; color: var(--white); }
-.score-pct { font-size: 11px; color: var(--text3); font-family: 'Space Mono', monospace; }
+.score-number { font-family: 'Orbitron', monospace; font-size: 32px; color: var(--white); }
+.score-pct { font-size: 11px; color: var(--text3); font-family: 'Share Tech Mono', monospace; }
 .score-info { flex: 1; }
-.score-grade { font-family: 'Bebas Neue', sans-serif; font-size: 24px; letter-spacing: 1px; margin-bottom: 8px; }
+.score-grade { font-family: 'Orbitron', monospace; font-size: 24px; letter-spacing: 1px; margin-bottom: 8px; }
 .score-summary { font-size: 12px; color: var(--text2); line-height: 1.6; }
 .stat-pills { display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
 .pill {
   display: flex; align-items: center; gap: 5px;
   padding: 5px 12px; border-radius: 20px;
-  font-family: 'Space Mono', monospace; font-size: 11px;
+  font-family: 'Share Tech Mono', monospace; font-size: 11px;
   background: var(--surface2); border: 1px solid var(--border); color: var(--text2);
 }
 .pill.bugs     { border-color: rgba(248,81,73,0.4);  color: var(--red);    background: rgba(248,81,73,0.08); }
@@ -211,10 +226,10 @@ body::before {
 .issues-section { flex: 1; overflow: hidden; display: flex; flex-direction: column; }
 .issues-header {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 12px 20px; border-bottom: 1px solid var(--border); flex-shrink: 0;
+  padding: 12px 20px; border-bottom: 1px solid var(--border); box-shadow: 0 1px 20px rgba(0,255,245,0.1); flex-shrink: 0;
 }
-.issues-title { font-family: 'Bebas Neue', sans-serif; font-size: 16px; letter-spacing: 2px; color: var(--text2); }
-.issues-count { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--text3); }
+.issues-title { font-family: 'Orbitron', monospace; font-size: 16px; letter-spacing: 2px; color: var(--text2); }
+.issues-count { font-family: 'Share Tech Mono', monospace; font-size: 11px; color: var(--text3); }
 #issuesList { flex: 1; overflow-y: auto; padding: 12px; }
 #issuesList::-webkit-scrollbar { width: 4px; }
 #issuesList::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
@@ -223,7 +238,7 @@ body::before {
   height: 100%; gap: 12px; color: var(--text3); text-align: center; padding: 20px;
 }
 .empty-icon { font-size: 40px; opacity: 0.4; }
-.empty-title { font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 1px; }
+.empty-title { font-family: 'Orbitron', monospace; font-size: 18px; letter-spacing: 1px; }
 .empty-sub { font-size: 12px; line-height: 1.6; }
 .issue-card {
   border-radius: 8px; padding: 12px 14px; margin-bottom: 8px;
@@ -245,14 +260,14 @@ body::before {
 .info     .issue-sev-dot { background: var(--cyan); }
 .good     .issue-sev-dot { background: var(--green); }
 .issue-body { flex: 1; min-width: 0; }
-.issue-line { font-family: 'Space Mono', monospace; font-size: 9px; color: var(--text3); margin-bottom: 3px; text-transform: uppercase; letter-spacing: 1px; }
+.issue-line { font-family: 'Share Tech Mono', monospace; font-size: 9px; color: var(--text3); margin-bottom: 3px; text-transform: uppercase; letter-spacing: 1px; }
 .issue-msg { font-size: 12px; font-weight: 500; color: var(--text); margin-bottom: 3px; line-height: 1.4; }
 .issue-detail { font-size: 11px; color: var(--text2); line-height: 1.5; }
 
 /* STATUS BAR */
 .status-bar {
   padding: 8px 20px; border-top: 1px solid var(--border);
-  font-family: 'Space Mono', monospace; font-size: 10px; color: var(--text3);
+  font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--text3);
   display: flex; align-items: center; justify-content: space-between;
   background: var(--surface2); flex-shrink: 0;
 }
@@ -283,7 +298,7 @@ body::before {
 
 @media (max-width: 900px) {
   .workspace { grid-template-columns: 1fr; height: auto; }
-  .editor-side { height: 60vh; border-right: none; border-bottom: 1px solid var(--border); }
+  .editor-side { height: 60vh; border-right: none; border-bottom: 1px solid var(--border); box-shadow: 0 1px 20px rgba(0,255,245,0.1); }
   .results-side { min-height: 500px; }
 }
 </style>
@@ -292,7 +307,7 @@ body::before {
 
 <header class="header">
   <div class="logo">
-    <div class="logo-mark">Perf</div>
+    <div class="logo-mark">⚡</div>
     <div class="logo-name">Code<span>Piolet</span></div>
   </div>
   <div class="header-tag">GOD-MODE ANALYZER</div>
@@ -409,7 +424,7 @@ const query = `SELECT * FROM users WHERE id = '${userInput}'`;</textarea>
       </button>
       <button class="btn btn-enhance" id="enhanceBtn" onclick="enhanceCode()" disabled>
         <div class="spinner white" id="enhanceSpinner"></div>
-        <span id="enhanceBtnText">Style Enhance</span>
+        <span id="enhanceBtnText">✨ Enhance</span>
       </button>
       <button class="btn btn-clear" onclick="clearAll()">🗑</button>
     </div>
@@ -439,10 +454,10 @@ const query = `SELECT * FROM users WHERE id = '${userInput}'`;</textarea>
         </div>
       </div>
       <div class="stat-pills" id="statPills">
-        <div class="pill bugs">Bugs Bugs: —</div>
-        <div class="pill security">Security Security: —</div>
-        <div class="pill style">Style Style: —</div>
-        <div class="pill perf">Perf Perf: —</div>
+        <div class="pill bugs">🐛 Bugs: —</div>
+        <div class="pill security">🔒 Security: —</div>
+        <div class="pill style">✨ Style: —</div>
+        <div class="pill perf">⚡ Perf: —</div>
       </div>
     </div>
 
@@ -540,10 +555,10 @@ function renderResults(data) {
   document.getElementById('scoreBadge').textContent = 'COMPLETE';
   document.getElementById('scoreBadge').className = 'score-badge done';
   document.getElementById('statPills').innerHTML = `
-    <div class="pill bugs">Bugs Bugs: ${data.bugs??0}</div>
-    <div class="pill security">Security Security: ${data.security??0}</div>
-    <div class="pill style">Style Style: ${data.style??0}</div>
-    <div class="pill perf">Perf Perf: ${data.performance??0}</div>`;
+    <div class="pill bugs">🐛 Bugs: ${data.bugs??0}</div>
+    <div class="pill security">🔒 Security: ${data.security??0}</div>
+    <div class="pill style">✨ Style: ${data.style??0}</div>
+    <div class="pill perf">⚡ Perf: ${data.performance??0}</div>`;
 
   const issues = data.issues || [];
   document.getElementById('issuesCount').textContent = `${issues.length} issue${issues.length!==1?'s':''}`;
@@ -650,10 +665,10 @@ async function enhanceCode() {
     document.getElementById('codeInput').value = data.enhanced;
     updateLineCount();
     document.getElementById('issuesList').innerHTML = `
-      <div class="empty-state"><div class="empty-icon">Style</div>
+      <div class="empty-state"><div class="empty-icon">🔬</div>
       <div class="empty-title">Code Enhanced</div>
       <div class="empty-sub">Re-analyzing improved code...</div></div>`;
-    toast('Style Enhanced! Re-analyzing...', 'success');
+    toast('✨ Enhanced! Re-analyzing...', 'success');
     setStatus('Enhanced — re-analyzing...', 'ok');
     setTimeout(() => analyzeCode(), 400);
 
@@ -666,7 +681,7 @@ async function enhanceCode() {
   isEnhancing = false;
   btn.disabled = false;
   document.getElementById('enhanceSpinner').style.display = 'none';
-  document.getElementById('enhanceBtnText').textContent = 'Style Enhance';
+  document.getElementById('enhanceBtnText').textContent = '✨ Enhance';
 }
 
 // ── CLEAR ──
@@ -683,10 +698,10 @@ function clearAll() {
   document.getElementById('scoreBadge').textContent = 'READY';
   document.getElementById('scoreBadge').className = 'score-badge';
   document.getElementById('statPills').innerHTML = `
-    <div class="pill bugs">Bugs Bugs: —</div>
-    <div class="pill security">Security Security: —</div>
-    <div class="pill style">Style Style: —</div>
-    <div class="pill perf">Perf Perf: —</div>`;
+    <div class="pill bugs">🐛 Bugs: —</div>
+    <div class="pill security">🔒 Security: —</div>
+    <div class="pill style">✨ Style: —</div>
+    <div class="pill perf">⚡ Perf: —</div>`;
   document.getElementById('issuesList').innerHTML = `
     <div class="empty-state"><div class="empty-icon">🔬</div>
     <div class="empty-title">No Analysis Yet</div>
