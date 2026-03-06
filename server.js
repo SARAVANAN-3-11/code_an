@@ -1,4 +1,4 @@
-const express = require('express');
+﻿const express = require('express');
 const cors = require('cors');
 const Groq = require('groq-sdk');
 const path = require('path');
@@ -10,12 +10,7 @@ app.use(express.json({ limit: '10mb' }));
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
 // Model fallback chain - auto switches if one hits rate limit
-const MODELS = [
-  'llama3-8b-8192',
-  'gemma2-9b-it',
-  'llama-3.1-8b-instant',
-  'mixtral-8x7b-32768'
-];
+const MODELS = ['llama-3.1-8b-instant','gemma2-9b-it','llama3-70b-8192','meta-llama/llama-4-scout-17b-16e-instruct'];
 
 async function callGroq(messages, maxTokens) {
   for (const model of MODELS) {
