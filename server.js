@@ -8,7 +8,7 @@ app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
-const MODEL = 'llama-3.3-70b-versatile';
+const MODEL = 'llama3-8b-8192';
 
 app.get('/check', (req, res) => {
   res.json({ status: 'working', groqKey: process.env.GROQ_API_KEY ? 'SET' : 'MISSING' });
