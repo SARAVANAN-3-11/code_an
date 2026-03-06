@@ -312,6 +312,7 @@ body::before {
       </div>
       <div class="toolbar-right">
         <select class="lang-select" id="langSelect" onchange="updateFileLabel()">
+          <optgroup label="Popular">
           <option value="python">Python</option>
           <option value="java">Java</option>
           <option value="cpp">C++</option>
@@ -323,9 +324,64 @@ body::before {
           <option value="swift">Swift</option>
           <option value="kotlin">Kotlin</option>
           <option value="scala">Scala</option>
+          <option value="typescript">TypeScript</option>
+          </optgroup>
+          <optgroup label="Systems">
+          <option value="assembly">Assembly</option>
+          <option value="fortran">Fortran</option>
+          <option value="cobol">COBOL</option>
+          <option value="ada">Ada</option>
+          <option value="pascal">Pascal</option>
+          <option value="delphi">Delphi</option>
+          <option value="verilog">Verilog</option>
+          <option value="vhdl">VHDL</option>
+          </optgroup>
+          <optgroup label="Scripting">
+          <option value="bash">Bash/Shell</option>
+          <option value="powershell">PowerShell</option>
+          <option value="perl">Perl</option>
+          <option value="lua">Lua</option>
+          <option value="groovy">Groovy</option>
+          <option value="tcl">Tcl</option>
+          <option value="awk">AWK</option>
+          <option value="sed">Sed</option>
+          </optgroup>
+          <optgroup label="Functional">
+          <option value="haskell">Haskell</option>
+          <option value="erlang">Erlang</option>
+          <option value="elixir">Elixir</option>
+          <option value="ocaml">OCaml</option>
+          <option value="fsharp">F#</option>
+          <option value="clojure">Clojure</option>
+          <option value="lisp">Lisp</option>
+          <option value="scheme">Scheme</option>
+          </optgroup>
+          <optgroup label="Data/ML">
           <option value="r">R</option>
           <option value="matlab">MATLAB</option>
-          <option value="bash">Bash/Shell</option>
+          <option value="julia">Julia</option>
+          <option value="sas">SAS</option>
+          <option value="stata">Stata</option>
+          </optgroup>
+          <optgroup label="Web/DB">
+          <option value="sql">SQL</option>
+          <option value="plsql">PL/SQL</option>
+          <option value="html">HTML/CSS</option>
+          <option value="xml">XML</option>
+          </optgroup>
+          <optgroup label="Other">
+          <option value="csharp">C#</option>
+          <option value="dart">Dart</option>
+          <option value="nim">Nim</option>
+          <option value="zig">Zig</option>
+          <option value="crystal">Crystal</option>
+          <option value="d">D</option>
+          <option value="objectivec">Objective-C</option>
+          <option value="prolog">Prolog</option>
+          <option value="solidity">Solidity</option>
+          <option value="apex">Apex</option>
+          <option value="abap">ABAP</option>
+          </optgroup>
         </select>
         <span class="kb-hint">Ctrl+Enter to analyze</span>
       </div>
@@ -414,7 +470,7 @@ const query = `SELECT * FROM users WHERE id = '${userInput}'`;</textarea>
 <div class="toast" id="toast"></div>
 
 <script>
-const EXT_MAP = { python:'py', java:'java', cpp:'cpp', c:'c', go:'go', rust:'rs', php:'php', ruby:'rb', swift:'swift', kotlin:'kt', scala:'scala', r:'r', matlab:'m', bash:'sh' };
+const EXT_MAP = { python:'py', java:'java', cpp:'cpp', c:'c', go:'go', rust:'rs', php:'php', ruby:'rb', swift:'swift', kotlin:'kt', scala:'scala', typescript:'ts', assembly:'asm', fortran:'f90', cobol:'cob', ada:'ada', pascal:'pas', delphi:'pas', verilog:'v', vhdl:'vhd', bash:'sh', powershell:'ps1', perl:'pl', lua:'lua', groovy:'groovy', tcl:'tcl', awk:'awk', sed:'sed', haskell:'hs', erlang:'erl', elixir:'ex', ocaml:'ml', fsharp:'fs', clojure:'clj', lisp:'lisp', scheme:'scm', r:'r', matlab:'m', julia:'jl', sas:'sas', stata:'do', sql:'sql', plsql:'sql', html:'html', xml:'xml', csharp:'cs', dart:'dart', nim:'nim', zig:'zig', crystal:'cr', d:'d', objectivec:'m', prolog:'pl', solidity:'sol', apex:'cls', abap:'abap' };
 let isAnalyzing = false;
 let isEnhancing = false;
 
