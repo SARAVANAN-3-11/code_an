@@ -312,14 +312,20 @@ body::before {
       </div>
       <div class="toolbar-right">
         <select class="lang-select" id="langSelect" onchange="updateFileLabel()">
-          <option value="javascript">JavaScript</option>
           <option value="python">Python</option>
-          <option value="cpp">C++</option>
           <option value="java">Java</option>
-          <option value="typescript">TypeScript</option>
+          <option value="cpp">C++</option>
+          <option value="c">C</option>
           <option value="go">Go</option>
           <option value="rust">Rust</option>
           <option value="php">PHP</option>
+          <option value="ruby">Ruby</option>
+          <option value="swift">Swift</option>
+          <option value="kotlin">Kotlin</option>
+          <option value="scala">Scala</option>
+          <option value="r">R</option>
+          <option value="matlab">MATLAB</option>
+          <option value="bash">Bash/Shell</option>
         </select>
         <span class="kb-hint">Ctrl+Enter to analyze</span>
       </div>
@@ -408,7 +414,7 @@ const query = `SELECT * FROM users WHERE id = '${userInput}'`;</textarea>
 <div class="toast" id="toast"></div>
 
 <script>
-const EXT_MAP = { javascript:'js', python:'py', cpp:'cpp', java:'java', typescript:'ts', go:'go', rust:'rs', php:'php' };
+const EXT_MAP = { python:'py', java:'java', cpp:'cpp', c:'c', go:'go', rust:'rs', php:'php', ruby:'rb', swift:'swift', kotlin:'kt', scala:'scala', r:'r', matlab:'m', bash:'sh' };
 let isAnalyzing = false;
 let isEnhancing = false;
 
@@ -637,4 +643,3 @@ function clearAll() {
 </script>
 </body>
 </html>
- 
